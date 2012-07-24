@@ -2355,14 +2355,15 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
     int i, k;
   if(Nnew > Nold){
 		Rcpp::Rcout << "NMH: In if "  << std::endl;
+		Rcpp::Rcout << "Width: "<< width  << std::endl;
     for(i=0; i<J; i++){
       for(k=0; k<width; k++){
 	    out += survmat(i,k)*log(1.0-p(nobs + i,k));
       }}}
   else {
    for( i=0; i<J; i++){
-		Rcpp::Rcout << "NMH: In else "  << std::endl;
-      for(k=0; k<width; k++){
+	Rcpp::Rcout << "NMH: In else "  << std::endl;
+      for(k=0; k< width; k++){
 	out -= survmat(i,k)*log(1.0-p(nobs + i,k));
 }}
   }
@@ -2470,7 +2471,6 @@ RcppExport SEXP NPopEst(SEXP _b00, SEXP _b0l, SEXP _g00, SEXP _g0l, SEXP _csi, S
 	  for(int i=1; i<I; i++){
 		test = csi(i);
 		Rcpp::Rcout << test << std::endl;
-        		//temp2 = vectorize(csi, i);
 		Rcpp::Rcout << "csi class:"<< csi(1)<<" "<< Nout(i-1)<< std::endl;
         		Nout(i) = RecruitMort(csi(i), b00(i), b0l(i), g00(i), g0l(i), Nout(i-1), Times, Nobserved, k, L0, Linf);
 					}
