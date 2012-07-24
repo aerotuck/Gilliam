@@ -2368,7 +2368,7 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
   }
 	Rcpp::Rcout << "NMH: After Loops" << std::endl;
   int mh;
-  double ran = log(runifd1(0.0,1.0));;
+  double ran = log(runifd1(0.0,1.0));
   if(ran<out){mh =1;}
   else {mh=0;}
   int N = mh*Nnew + (1-mh)*Nold;
