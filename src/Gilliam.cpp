@@ -2337,9 +2337,9 @@ NumericVector VonBertVec(double BD, NumericVector Times, double k, double L0, do
   return lengths;
 }
 
-long int Factorial2(int N){
-	long int out=1;
-	for(int i=0; i<N; i++){
+int Factorial2(int N){
+	int out=1;
+	for(int i=1; i<N; i++){
 		out *= i+1;
 	}
 return out;
@@ -2348,11 +2348,12 @@ return out;
 int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
   // Need to add the proposal functions...
 	Rcpp::Rcout << "NMH: Inside" << std::endl;
-	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << std::endl;
-
-	int J = abs(Nnew-Nold), width = p.ncol(), ratio = Factorial2(Nnew)*Factorial2(Nold-nobs)/Factorial2(Nnew-nobs)/Factorial2(Nold);
-  double out = log(ratio);
-	Rcpp::Rcout << "Width: "<< width  << std::endl;
+	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << " Nobs: " << nobs<< std::endl;
+	int J = abs(Nnew-Nold), width = p.ncol();
+	int temp = Factorial2(5);
+	double ratio = Factorial2(Nnew)*Factorial2(Nold-nobs)/Factorial2(Nnew-nobs)/Factorial2(Nold);
+   double out = ::log(ratio);
+	Rcpp::Rcout << "Temp: " << temp <<" Ratio: " << ratio <<" Out: "<< out << " Width: "<< width  <<std::endl;
 	Rcpp::Rcout << "NMH: Initialize "  << std::endl;
     int i, k;
   if(Nnew > Nold){
@@ -2360,7 +2361,7 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
 
     for(i=0; i<J; i++){
       for(k=0; k<width; k++){
-	    out += survmat(i,k)*log(1.0-p(nobs + i,k));
+	    out += survmat(i,k)*::log(1.0-p(nobs + i,k));
       }}}
   else {
    for( i=0; i<J; i++){
