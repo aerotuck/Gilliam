@@ -2336,13 +2336,31 @@ NumericVector VonBertVec(double BD, NumericVector Times, double k, double L0, do
   }
   return lengths;
 }
+//
+//int Factorial2(int N){
+//	int out=1;
+//	for(int i=1; i<N; i++){
+//		out *= i+1;
+//	}
+//return out;
+//}
+int factorial(int i)
+{
+int k,j;
+k=1;
+for(j=1;j<i;j++)
+  {
+  k=k*(j+1);
+  }
+return k;
+}
 
-int Factorial2(int N){
-	int out=1;
-	for(int i=1; i<N; i++){
-		out *= i+1;
-	}
-return out;
+double ratiomaker(int Nnew, int Nold, int nobs){
+	double out = factorial(Nnew);
+	out *= factorial(Nold-nobs);
+	out = out/factorial(Nnew-nobs);
+	out = out/factorial(Nold);
+	return out;
 }
 
 int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
@@ -2350,10 +2368,10 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
 	Rcpp::Rcout << "NMH: Inside" << std::endl;
 	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << " Nobs: " << nobs<< std::endl;
 	int J = abs(Nnew-Nold), width = p.ncol();
-	int temp = Factorial2(5);
-	double ratio = Factorial2(Nnew)*Factorial2(Nold-nobs)/Factorial2(Nnew-nobs)/Factorial2(Nold);
-   double out = ::log(ratio);
-	Rcpp::Rcout << "Temp: " << temp <<" Ratio: " << ratio <<" Out: "<< out << " Width: "<< width  <<std::endl;
+	double ration = ratiomaker(Nnew, Nold, nobs);
+   double out = log(ration);
+
+	Rcpp::Rcout << " Ratio: " << ration<<" Out: "<< out << " Width: "<< width  <<std::endl;
 	Rcpp::Rcout << "NMH: Initialize "  << std::endl;
     int i, k;
   if(Nnew > Nold){
