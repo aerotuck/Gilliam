@@ -3,7 +3,7 @@
 # Author: matthewkrachey
 ###############################################################################
 require(Gilliam)
-run.sim = function(chainnumber1, readstart1=TRUE, readstep1=TRUE, savestep1 = TRUE, niter1= 1000){
+run.sim = function(chainnumber1, readstart1=TRUE, readstep1=TRUE, savestep1 = TRUE, niter1= 1000, lastiterforstep1 = -50){
 	setwd("~/Dropbox/Research/Consulting/Gilliam/EdWork") 
 	
 	
@@ -702,7 +702,7 @@ write.csv(output.data, paste('StartStep/Mod1.start.N.chain.',outname, '.txt', se
 
 NPopEst =function(b00, b0l, g00, g0l, csi, Nobserved, Times).Call("NPopEst",b00, b0l, g00, g0l, csi, Nobserved, Times,package="Gilliam")
 Surv2 = function( Sij, b0,  b1,  time1,  Dij,  Lij) .Call("Surv2",  Sij, b0,  b1,  time1,  Dij,  Lij,package="Gilliam")
-LengthLike2 = function(Diji, Liji, sigma1) .Call("LengthLikeR",Diji, Liji, sigma1, package="Gilliam")
+LengthLikeR = function(Diji, Liji, sigma1) .Call("LengthLikeR",Diji, Liji, sigma1, package="Gilliam")
 mortality2 = function(  ab1,  ad1,  S1) .Call("mortalityR", ab1,  ad1,  S1, package="Gilliam")
 Surv3prep = function( Inlist) .Call("Surv3Prep", Inlist, package="Gilliam")
 
@@ -716,3 +716,14 @@ Surv3prep = function( Inlist) .Call("Surv3Prep", Inlist, package="Gilliam")
   capture2= function( x1,  ab1,  ad1,  Dij).Call("captureR", x1,  ab1,  ad1,  Dij, package="Gilliam")
   
   csi_sample1=function( list_in1,  nsim1).Call("csi_sample1", list_in1,  nsim1, package="Gilliam")
+  
+  
+  ### For the mcapply, inputting the chainnumber1 has a whole string, but I need to separate out the prefix and the chain number for the mclapply version
+  ### This function simply splits apart the prefix and number, and feeds it through the population estimator
+  ### Would have to have a chain length of 1-9 for this to work without modification
+  Ncalc.mcapply = function(x){
+	  require(stringr)
+	  chainnumber1 = sub_str(x, start=1, end=-2)
+	  chain.numb = sub_str(x, start=-1,end=-1)
+	  NPopEst(chainnumber1,chain.numb)
+  }
