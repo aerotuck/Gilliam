@@ -2302,11 +2302,11 @@ double Nlogpropden(int Nold, int Nnew){
 }
 
 NumericMatrix DetectionProb(double g00, double gl0, NumericMatrix Length){
-	Rcpp::Rcout << "In DetectionProb" << std::endl;
+//	Rcpp::Rcout << "In DetectionProb" << std::endl;
   int J = Length.ncol();
   int I = Length.nrow();
   NumericMatrix p(I,J);
-	Rcpp::Rcout << "DetectionProb: Initialized" << std::endl;
+//  Rcpp::Rcout << "DetectionProb: Initialized" << std::endl;
   for(int i=0; i<I; i++){
 	  for(int j=0; j<J; j++){
     p(i,j) = logistic1(g00 + gl0*Length(i,j));
@@ -2344,38 +2344,40 @@ NumericVector VonBertVec(double BD, NumericVector Times, double k, double L0, do
 //	}
 //return out;
 //}
-int factorial(int i)
+double factorial(int i, int j)
 {
-int k,j;
-k=1;
-for(j=1;j<i;j++)
+int l;
+double k;
+k=log(i);
+int limit = j+1;
+for(l=i;l> limit;l--)
   {
-  k=k*(j+1);
+  k += log((l-1));
   }
 return k;
 }
 
 double ratiomaker(int Nnew, int Nold, int nobs){
-	double out = factorial(Nnew);
-	out *= factorial(Nold-nobs);
-	out = out/factorial(Nnew-nobs);
-	out = out/factorial(Nold);
-	return out;
+double numerator = factorial(Nnew, Nnew-nobs);
+double denominator = factorial(Nold, Nold-nobs);
+Rcpp::Rcout << "Numerator: " << numerator <<" Denominator: "<< denominator << std::endl;
+double out = numerator - denominator;
+return out;
 }
 
 int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
   // Need to add the proposal functions...
-	Rcpp::Rcout << "NMH: Inside" << std::endl;
-	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << " Nobs: " << nobs<< std::endl;
+//	Rcpp::Rcout << "NMH: Inside" << std::endl;
+//	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << " Nobs: " << nobs<< std::endl;
 	int J = abs(Nnew-Nold), width = p.ncol();
-	double ration = ratiomaker(Nnew, Nold, nobs);
-   double out = log(ration);
-
-	Rcpp::Rcout << " Ratio: " << ration<<" Out: "<< out << " Width: "<< width  <<std::endl;
-	Rcpp::Rcout << "NMH: Initialize "  << std::endl;
+	double out = ratiomaker(Nnew, Nold, nobs);
+   double test = factorial(5,3);
+//	Rcpp::Rcout << " test: " << test  <<std::endl;
+//	Rcpp::Rcout <<" Out: "<< out << " Width: "<< width  << std::endl;
+//	Rcpp::Rcout << "NMH: Initialize "  << std::endl;
     int i, k;
   if(Nnew > Nold){
-		Rcpp::Rcout << "NMH: In if "  << std::endl;
+	//	Rcpp::Rcout << "NMH: In if "  << std::endl;
 
     for(i=0; i<J; i++){
       for(k=0; k<width; k++){
@@ -2383,12 +2385,12 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
       }}}
   else {
    for( i=0; i<J; i++){
-	Rcpp::Rcout << "NMH: In else "  << std::endl;
+	//Rcpp::Rcout << "NMH: In else "  << std::endl;
       for(k=0; k< width; k++){
 	out -= survmat(i,k)*log(1.0-p(nobs + i,k));
 }}
   }
-	Rcpp::Rcout << "NMH: After Loops" << std::endl;
+	//Rcpp::Rcout << "NMH: After Loops" << std::endl;
   int mh;
   double ran = log(runifd1(0.0,1.0));
   if(ran<out){mh =1;}
@@ -2422,7 +2424,7 @@ return out;
 
 int RecruitMort (double csi, double b00, double b0l, double g00, double gl0, int Nold, NumericVector Times, int Nobserved, double k, double L0, double Linf){
   // First Initialize
-	Rcpp::Rcout << "In RecruitMort" << std::endl;
+//	Rcpp::Rcout << "In RecruitMort" << std::endl;
   int Nprop = Nproposal(Nold, Nobserved);
   int Nmax = std::max(Nprop, Nold);
   int Nnew = Nmax - Nobserved;
@@ -2431,7 +2433,7 @@ int RecruitMort (double csi, double b00, double b0l, double g00, double gl0, int
   NumericMatrix Dij(Nnew,J), Lij(Nnew,J);
   double tempBD;
   NumericVector tempLength;
-	Rcpp::Rcout << "RecruitMort: Initialized" << std::endl;
+//	Rcpp::Rcout << "RecruitMort: Initialized" << std::endl;
   for(int i=0; i<Nnew; i++){
 	  Period(i) = rmult(csi);
 
@@ -2446,15 +2448,15 @@ int RecruitMort (double csi, double b00, double b0l, double g00, double gl0, int
     Lij(i,j) = tempLength(j);
     }
   } // End For Loop
-	Rcpp::Rcout << "RecruitMort: After Loop" << std::endl;
+//	Rcpp::Rcout << "RecruitMort: After Loop" << std::endl;
     SEXP morttemp = Surv4(b00, b0l, Dij, Lij);
     NumericMatrix morttemp2(morttemp);
-    Rcpp::Rcout << "RecruitMort: After Surv4" << std::endl;
+  //  Rcpp::Rcout << "RecruitMort: After Surv4" << std::endl;
     NumericMatrix dettemp = DetectionProb(g00, gl0, Lij);
-	Rcpp::Rcout << "RecruitMort: After DetectionProb" << std::endl;
-	Rcpp::Rcout << "Nnew: "<<Nprop<< " Nold: " << Nold << std::endl;
+//	Rcpp::Rcout << "RecruitMort: After DetectionProb" << std::endl;
+//	Rcpp::Rcout << "Nnew: "<<Nprop<< " Nold: " << Nold << std::endl;
     outnew = NMH(Nprop, Nold, Nobserved, dettemp, morttemp2);
-	Rcpp::Rcout << "RecruitMort: After NMH" << std::endl;
+//	Rcpp::Rcout << "RecruitMort: After NMH" << std::endl;
   return outnew;
 }
 
@@ -2468,31 +2470,32 @@ return vecin;
 }
 
 RcppExport SEXP NPopEst(SEXP _b00, SEXP _b0l, SEXP _g00, SEXP _g0l, SEXP _csi, SEXP _Nobserved, SEXP _Times){
-	Rcpp::Rcout << "In NPopEst" << std::endl;
+	//Rcpp::Rcout << "In NPopEst" << std::endl;
 	NumericVector b00(_b00);
-	Rcpp::Rcout << "b00" << std::endl;
+	//Rcpp::Rcout << "b00" << std::endl;
 	NumericVector b0l(_b0l);
-	Rcpp::Rcout << "b0l" << std::endl;
+	//Rcpp::Rcout << "b0l" << std::endl;
 	NumericVector g00(_g00);
-	Rcpp::Rcout << "g00" << std::endl;
+	//Rcpp::Rcout << "g00" << std::endl;
 	NumericVector g0l(_g0l);
-	Rcpp::Rcout << "gl0" << std::endl;
+//	Rcpp::Rcout << "gl0" << std::endl;
 
 	NumericVector Times(_Times);
-	Rcpp::Rcout << "First Line" << std::endl;
+	//Rcpp::Rcout << "First Line" << std::endl;
 	NumericVector csi(_csi);
-	Rcpp::Rcout << "Converted" << std::endl;
+//	Rcpp::Rcout << "Converted" << std::endl;
 	int I = b00.size(), Nobserved= as<int>(_Nobserved);
     IntegerVector Nout(I);
     Nout(0) = Nobserved + 10;
     NumericVector temp2;
     double L0=30.0, Linf = 100.0, k=1/0.00254868;
-	  Rcpp::Rcout << "Prior to loop" << std::endl;
+	//  Rcpp::Rcout << "Prior to loop" << std::endl;
 	double test;
 	  for(int i=1; i<I; i++){
 		test = csi(i);
-		Rcpp::Rcout << test << std::endl;
-		Rcpp::Rcout << "csi class:"<< csi(1)<<" "<< Nout(i-1)<< std::endl;
+	//	Rcpp::Rcout << test << std::endl;
+	//	Rcpp::Rcout << "csi class:"<< csi(1)<<" "<< Nout(i-1)<< std::endl;
+	//	Rcpp::Rcout << "Iteration:"<< i << std::endl;
         		Nout(i) = RecruitMort(csi(i), b00(i), b0l(i), g00(i), g0l(i), Nout(i-1), Times, Nobserved, k, L0, Linf);
 					}
 	return wrap(Nout);

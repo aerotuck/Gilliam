@@ -9,7 +9,7 @@ NPopEst =function(b00, b0l, g00, g0l, csi, Nobserved, Times).Call("NPopEst",b00,
 pastes = Curry(paste, sep="")
 setwd("~/Dropbox/Research/Consulting/Gilliam/EdWork/Samples/")
 
-###  Read in some test data.
+###  Read in asome test data.
 cc1 <- as.matrix(read.csv("~/Dropbox/Research/Consulting/Gilliam/EdWork/cc.csv", header=FALSE))
 ci1 <- as.matrix(read.csv("~/Dropbox/Research/Consulting/Gilliam/EdWork/ci.csv", header=FALSE))
 lc1 <- as.matrix(read.csv("~/Dropbox/Research/Consulting/Gilliam/EdWork/lc.csv", header=FALSE))
@@ -37,4 +37,5 @@ parameters = c("b00","bl0","g00","gl0","csi1")
 reader = function(param,n,col) read.csv(pastes("Mod1.sample.",param,".chain.FixK",n,".csv"))[,col]
 reader11 = Curry(reader, n=1, col=1)
 trial.data = NPopEst(reader11("b00"), reader11("bl0"), reader11("g00"), reader11("gl0"), reader11("csi1"), nrow(cc1), cctime1)
+
 
