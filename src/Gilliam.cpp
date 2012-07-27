@@ -116,12 +116,12 @@ double dgammainvlogd1(double X, double a1, double b1){
 //  dinvchisq is the R function
 //  d1 means it returns a double and a single value
 //  Status:  NEEDS TESTING
-extern "C" SEXP dchisqinvlogd1R(SEXP _X, SEXP _v1){
+RcppExport SEXP dchisqinvlogd1R(SEXP _X, SEXP _v1){
   double res1,X=as<double>(_X), v1 = as<double>(_v1);
    res1 = dgammainvlogd1(X, v1*0.5, 0.5);
    return wrap(res1);
 }
-extern "C" SEXP dchisqinvlogdVVR(SEXP _X, SEXP _v1){
+RcppExport SEXP dchisqinvlogdVVR(SEXP _X, SEXP _v1){
   NumericVector X(_X), v1(_v1);
   int I = X.size(),i;
   double res1=0.0;
@@ -131,7 +131,7 @@ for(i=0; i< I; i++){
  return wrap(res1);
 }
 
-extern "C" SEXP dchisqinvlogdVSR(SEXP _X, SEXP _v1){
+RcppExport SEXP dchisqinvlogdVSR(SEXP _X, SEXP _v1){
   NumericVector X(_X);
   int I = X.size(),i;
   double res1=0.0,v1=as<double>(_v1);
@@ -1338,7 +1338,7 @@ SEXP sigma1sample2(double sigma1, SEXP _t0i1, SEXP _Lij, SEXP _d1, double lambda
 
 
 
-extern "C" SEXP indmat(SEXP n){
+RcppExport SEXP indmat(SEXP n){
   Rcpp::NumericMatrix mat(n);
 int N = mat.nrow();
 Rcpp::NumericMatrix total(N,N);
@@ -1351,7 +1351,7 @@ total(i,j)= i+j+2;
 return wrap(total);
 }
 
-extern "C" SEXP multmat(SEXP n){
+RcppExport SEXP multmat(SEXP n){
   Rcpp::NumericMatrix mat(n);
 int N = mat.nrow();
 Rcpp::NumericMatrix total(N,N);
@@ -1398,7 +1398,7 @@ double minmat(SEXP _x){
 //double LengthLike0(SEXP Diji, SEXP Liji, double sigma1)
 // double VonBert(double tt1, double tt0, double k1, double L01, double Linf1)
 
-extern "C" SEXP Surv3prep(SEXP _Inlist){
+RcppExport SEXP Surv3prep(SEXP _Inlist){
    Rcpp::List n2(_Inlist);
    NumericMatrix Sij=n2["Sij"];
 
@@ -1412,7 +1412,7 @@ extern "C" SEXP Surv3prep(SEXP _Inlist){
 }
 
 
-extern "C" SEXP Surv2(SEXP Sij, SEXP _b0, SEXP _b1, SEXP time1, SEXP Dij, SEXP Lij){
+RcppExport SEXP Surv2(SEXP Sij, SEXP _b0, SEXP _b1, SEXP time1, SEXP Dij, SEXP Lij){
   // Rcpp::NumericMatrix Sij1(Sij);
    Rcpp::NumericMatrix Dij1(Dij);
    Rcpp::NumericMatrix Lij1(Lij);
@@ -1436,7 +1436,7 @@ extern "C" SEXP Surv2(SEXP Sij, SEXP _b0, SEXP _b1, SEXP time1, SEXP Dij, SEXP L
 //extern "C" SEXP try1( SEXP
 //		double out;
 //logistic1(b0 + b1*Dij1[i,j])
-extern "C" SEXP mortalityR( SEXP ab1, SEXP ad1, SEXP S1){
+RcppExport SEXP mortalityR( SEXP ab1, SEXP ad1, SEXP S1){
   Rcpp::NumericMatrix ab(ab1);
   Rcpp::NumericMatrix ad(ad1);
   Rcpp::NumericMatrix S(S1);
@@ -1458,7 +1458,7 @@ extern "C" SEXP mortalityR( SEXP ab1, SEXP ad1, SEXP S1){
   return wrap(result);
 }
 
-extern "C" SEXP DetectR(SEXP Diji, SEXP Liji, SEXP _g00, SEXP _gl0){
+RcppExport SEXP DetectR(SEXP Diji, SEXP Liji, SEXP _g00, SEXP _gl0){
   Rcpp::NumericMatrix Dij(Diji);
   Rcpp::NumericMatrix Lij(Liji);
   double g00 = as<double>(_g00),gl0=as<double>(_gl0);
@@ -1477,7 +1477,7 @@ extern "C" SEXP DetectR(SEXP Diji, SEXP Liji, SEXP _g00, SEXP _gl0){
   return wrap(DijOut);
 }
 
-extern "C" SEXP birthR( SEXP ab1, SEXP csi2){
+RcppExport SEXP birthR( SEXP ab1, SEXP csi2){
   Rcpp::NumericMatrix csi(csi2);
   Rcpp::NumericMatrix ab(ab1);
   int I, i, J, j;
@@ -1496,7 +1496,7 @@ extern "C" SEXP birthR( SEXP ab1, SEXP csi2){
   return wrap(result1);
 }
 
-extern "C" SEXP captureR(SEXP x1, SEXP ab1, SEXP ad1, SEXP Dij){
+RcppExport SEXP captureR(SEXP x1, SEXP ab1, SEXP ad1, SEXP Dij){
   //Rcpp::Rcout << "Made it2?" << std::endl;
   Rcpp::NumericMatrix x(x1);
   Rcpp::NumericMatrix ab(ab1);
@@ -1518,7 +1518,7 @@ extern "C" SEXP captureR(SEXP x1, SEXP ab1, SEXP ad1, SEXP Dij){
     return wrap(resulter);
 }
 
-extern "C" SEXP LengthLikeR(SEXP Diji, SEXP Liji, SEXP _sigma1){
+RcppExport SEXP LengthLikeR(SEXP Diji, SEXP Liji, SEXP _sigma1){
   Rcpp::NumericMatrix Dij(Diji);
   Rcpp::NumericMatrix Lij(Liji);
   double sigma1=as<double>(_sigma1);
@@ -1541,7 +1541,7 @@ extern "C" SEXP LengthLikeR(SEXP Diji, SEXP Liji, SEXP _sigma1){
 ///  A function to sample the birth parameter
 ///  Requires a list as an input
 ///
-extern "C" SEXP csi_sample1(SEXP list_in1, SEXP _nsim1){
+RcppExport SEXP csi_sample1(SEXP list_in1, SEXP _nsim1){
    //Rcout << " In Function" << std::endl;
    Rcpp::List in1(list_in1);
    int nsim1 = as<int>(_nsim1);
@@ -2336,14 +2336,7 @@ NumericVector VonBertVec(double BD, NumericVector Times, double k, double L0, do
   }
   return lengths;
 }
-//
-//int Factorial2(int N){
-//	int out=1;
-//	for(int i=1; i<N; i++){
-//		out *= i+1;
-//	}
-//return out;
-//}
+
 double factorial(int i, int j)
 {
 int l;
@@ -2371,7 +2364,6 @@ int NMH(int Nnew, int Nold, int nobs, NumericMatrix p, NumericMatrix survmat){
 //	Rcpp::Rcout << "NNew: " << Nnew <<" Nold: "<< Nold << " Nobs: " << nobs<< std::endl;
 	int J = abs(Nnew-Nold), width = p.ncol();
 	double out = ratiomaker(Nnew, Nold, nobs);
-   double test = factorial(5,3);
 //	Rcpp::Rcout << " test: " << test  <<std::endl;
 //	Rcpp::Rcout <<" Out: "<< out << " Width: "<< width  << std::endl;
 //	Rcpp::Rcout << "NMH: Initialize "  << std::endl;
