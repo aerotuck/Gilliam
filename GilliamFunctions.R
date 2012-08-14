@@ -47,6 +47,8 @@ lintimes1 <- ncol(li1)
 ucntimes1 <- ncol(uc1)
 uintimes1 <- ncol(ui1)
 
+timer = c(ccntimes1, cintimes1, lcntimes1, lintimes1, tcntimes1, tintimes1, ucntimes1, uintimes1)
+
 if(readstart1 == TRUE){
 	b00 <- as.vector(t(read.csv(paste('StartStep/Mod1.start.b00.chain.', chainnumber1, '.txt', sep=""),header=TRUE)))
 	b01m <- as.vector(t(read.csv(paste('StartStep/Mod1.start.b01m.chain.', chainnumber1, '.txt', sep=""),header=TRUE)))
@@ -426,21 +428,21 @@ write.csv(sim1results$sigma1, paste('Samples/Mod1.sample.sigma1.chain.', chainnu
 ############################################################
 ############################################################
 
-write.csv(sim1results$PopEstcc, paste('Samples/Mod1.sample.PopCC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstcc, paste('Samples/Mod1.sample.PopCC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstci, paste('Samples/Mod1.sample.PopCI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstci, paste('Samples/Mod1.sample.PopCI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstlc, paste('Samples/Mod1.sample.PopLC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstlc, paste('Samples/Mod1.sample.PopLC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstli, paste('Samples/Mod1.sample.PopLI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstli, paste('Samples/Mod1.sample.PopLI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEsttc, paste('Samples/Mod1.sample.PopTC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEsttc, paste('Samples/Mod1.sample.PopTC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstti, paste('Samples/Mod1.sample.PopTI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstti, paste('Samples/Mod1.sample.PopTI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstuc, paste('Samples/Mod1.sample.PopUC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstuc, paste('Samples/Mod1.sample.PopUC.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
-write.csv(sim1results$PopEstui, paste('Samples/Mod1.sample.PopUI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
+#write.csv(sim1results$PopEstui, paste('Samples/Mod1.sample.PopUI.chain.', chainnumber1, '.csv', sep=""), row.names=FALSE)
 
 
 
@@ -481,7 +483,7 @@ if( savestep1 == TRUE ){
 units = c("cc","ci","lc", "li", "tc", "ti", "uc", "ui")
 
 ### Convenience function for reading in the csvs. Curried within the function below
-reader = function(param,n,col,chainnumber1) read.csv(pastes("Mod1.sample.",param,".chain.",chainnumber1, ".",n,".csv"))[,col]
+reader = function(param,n,col,chainnumber1) read.csv(pastes("Mod1.sample.",param,".chain.", chainnumber1, n,".csv"))[,col]
 
 
 
@@ -723,7 +725,12 @@ Surv3prep = function( Inlist) .Call("Surv3Prep", Inlist, package="Gilliam")
   ### Would have to have a chain length of 1-9 for this to work without modification
   Ncalc.mcapply = function(x){
 	  require(stringr)
-	  chainnumber1 = sub_str(x, start=1, end=-2)
-	  chain.numb = sub_str(x, start=-1,end=-1)
-	  NPopEst(chainnumber1,chain.numb)
+	  chainnumber1 = str_sub(x, start=1, end=-2)
+	  chain.numb = str_sub(x, start=-1,end=-1)
+	  length.chains = length(reader("g00",n=1,col=1))
+	  for(i in 1:8){
+		  reader11 = Curry(reader, n=chain.numb, col=i)
+		  output.data[,i]= NPopEst(reader11("b00"), reader11("bl0"), reader11("g00"), reader11("gl0"), reader11("csi1"), length.chains, get(timer[i]))
+	  }
+	  write.csv(output.data, paste('StartStep/Mod1.start.N.chain.', x , '.txt', sep=""),  row.names=FALSE)
   }
